@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="hy" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
+<meta name="theme-color" content="#2e7d32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>Կենսաբանության նախագիծ — Առողջ սնուցում</title>
+<style>
+/* ==========================================
+   1) ROOT / DARK THEME
+========================================== */
+:root{
+  --green:#2e7d32;--green-dark:#1b5e20;--green-light:#a5d6a7;
+  --orange:#ff7043;--orange-light:#ffccbc;
+  --bg:#f4f9f4;--bg-alt:#e8f5e9;
+  --card:#ffffff;--card-alt:#f6fbf6;
+  --dark:#1b3a1f;--text:#1b3a1f;--text-muted:#6b7c6d;
+  --border:#e6f0e6;--border-soft:#d4e8d4;
+  --input-bg:#ffffff;
+  --shadow:0 4px 18px rgba(27,58,31,.08);
+  --shadow-lg:0 14px 34px rgba(27,58,31,.14);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --p-color:#4fc3f7;--f-color:#ba68c8;--c-color:#81c784;
+}
+[data-theme="dark"]{
+  --green:#4caf50;--green-dark:#a5d6a7;--green-light:#2e7d32;
+  --bg:#0d1911;--bg-alt:#122117;
+  --card:#172a1c;--card-alt:#1d3322;
+  --dark:#e8f0e8;--text:#e8f0e8;--text-muted:#a5b8a8;
+  --border:#25452a;--border-soft:#2e4a33;
+  --input-bg:#1e3324;
+  --shadow:0 4px 18px rgba(0,0,0,.35);
+  --shadow-lg:0 14px 34px rgba(0,0,0,.5);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;}
+body{
+  font-family:"Segoe UI","Noto Sans Armenian",system-ui,-apple-system,Arial,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  overscroll-behavior-y:none;position:relative;
+  transition:background .4s,color .4s;
+}
+img,svg{max-width:100%;display:block;}
+button{font-family:inherit;touch-action:manipulation;user-select:none;-webkit-user-select:none;}
+a{-webkit-tap-highlight-color:transparent;}
+input,select{font-family:inherit;}
+
+/* ==========================================
+   2) FIXED UTILITIES
+========================================== */
+.scroll-progress{
+  position:fixed;top:0;left:0;height:4px;z-index:9999;
+  background:linear-gradient(90deg,var(--orange),var(--green));
+  width:0%;transition:width .1s linear;
+  box-shadow:0 0 12px rgba(46,125,50,.5);
+}
+.fixed-btn{
+  position:fixed;
+  top:calc(14px + var(--safe-top));
+  width:46px;height:46px;border-radius:50%;
+  background:var(--card);border:1px solid var(--border);
+  font-size:1.25rem;cursor:pointer;z-index:200;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  transition:transform .3s,box-shadow .3s,background .3s;
+  display:grid;place-items:center;color:var(--text);
+}
+.fixed-btn:hover{transform:scale(1.12) rotate(15deg);box-shadow:0 8px 20px rgba(0,0,0,.18);}
+.fixed-btn:active{transform:scale(.94);}
+.theme-toggle{right:14px;}
+.sound-toggle{right:calc(14px + 56px);}
+.music-toggle{right:calc(14px + 112px);}
+.music-toggle.playing{animation:musicSpin 3s linear infinite;}
+@keyframes musicSpin{to{transform:rotate(360deg);}}
+
+.back-top{
+  position:fixed;right:20px;bottom:calc(20px + var(--safe-bottom));
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#fff;border:none;font-size:1.3rem;cursor:pointer;
+  box-shadow:0 6px 22px rgba(27,94,32,.4);
+  opacity:0;visibility:hidden;transform:translateY(20px);
+  transition:.35s cubic-bezier(.34,1.56,.64,1);z-index:99;
+}
+.back-top.show{opacity:1;visibility:visible;transform:translateY(0);}
+.back-top:hover{transform:translateY(-4px) scale(1.08);}
+.back-top:active{transform:scale(.92);}
+
+.toast{
+  position:fixed;top:80px;left:50%;
+  transform:translate(-50%,-120px);
+  background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#fff;padding:14px 26px;border-radius:30px;
+  font-weight:700;font-size:.95rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  opacity:0;transition:all .5s cubic-bezier(.34,1.56,.64,1);
+  z-index:2000;pointer-events:none;max-width:90vw;text-align:center;
+}
+.toast.show{transform:translate(-50%,0);opacity:1;}
+
+/* ==========================================
+   3) HEADER
+========================================== */
+header{
+  min-height:100vh;min-height:100svh;
+  background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 55%,#0f3d14 100%);
+  background-size:200% 200%;animation:gradientShift 14s ease infinite;
+  color:#fff;
+  padding:calc(60px + var(--safe-top)) 20px 100px;
+  text-align:center;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+}
+@keyframes gradientShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+
+.particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1;}
+.particles span{
+  position:absolute;font-size:clamp(20px,3vw,36px);opacity:.18;
+  animation:floatUp linear infinite;will-change:transform;filter:blur(.5px);
+}
+@keyframes floatUp{
+  0%{transform:translateY(110vh) rotate(0);opacity:0;}
+  10%,90%{opacity:.22;}
+  100%{transform:translateY(-20vh) rotate(360deg);opacity:0;}
+}
+header > *:not(.particles){position:relative;z-index:2;}
+header .school{
+  display:inline-block;background:rgba(255,255,255,.15);
+  padding:8px 20px;border-radius:50px;font-size:.9rem;letter-spacing:.5px;
+  margin-bottom:20px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.25);animation:slideDown 1s ease .1s both;
+}
+header h1{
+  font-size:clamp(1.8rem,5.5vw,3.4rem);font-weight:800;
+  margin-bottom:16px;text-shadow:0 3px 20px rgba(0,0,0,.3);
+  animation:slideDown 1s ease .25s both;line-height:1.15;min-height:1.2em;
+}
+header p{
+  max-width:720px;margin:0 auto;font-size:clamp(.95rem,2vw,1.15rem);
+  opacity:0;animation:slideDown 1s ease .5s forwards;
+}
+header .badge-row{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:30px;
+  opacity:0;animation:slideDown 1s ease .7s forwards;
+}
+header .badge-row span{
+  background:rgba(255,255,255,.12);padding:9px 18px;border-radius:30px;
+  font-size:.88rem;border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  transition:.3s;animation:pulse 3s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * .3s);
+}
+header .badge-row span:hover{background:rgba(255,255,255,.28);transform:translateY(-3px) scale(1.05);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.15);}50%{box-shadow:0 0 0 8px rgba(255,255,255,0);}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-25px);}to{opacity:1;transform:translateY(0);}}
+
+.typewriter::after{
+  content:"|";display:inline-block;animation:blink 1s steps(2) infinite;
+  color:var(--orange-light);font-weight:300;
+}
+@keyframes blink{50%{opacity:0;}}
+
+.scroll-hint{
+  position:absolute;bottom:calc(30px + var(--safe-bottom));left:50%;
+  transform:translateX(-50%);color:rgba(255,255,255,.75);font-size:.8rem;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  opacity:0;animation:bounceY 2s ease-in-out infinite,fadeIn 1s ease 1.5s forwards;
+  z-index:3;cursor:pointer;padding:8px;border-radius:20px;
+  transition:background .3s;text-decoration:none;
+}
+.scroll-hint:hover{background:rgba(255,255,255,.1);}
+.scroll-hint .arrow{font-size:1.4rem;}
+@keyframes bounceY{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);}}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* ==========================================
+   4) NAV
+========================================== */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:color-mix(in srgb,var(--card) 92%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 2px 20px rgba(0,0,0,.06);
+  padding-top:var(--safe-top);transition:background .4s;
+}
+nav ul{
+  list-style:none;display:flex;justify-content:center;flex-wrap:wrap;
+  max-width:1200px;margin:0 auto;padding:10px 14px;gap:4px;
+}
+nav a{
+  text-decoration:none;color:var(--text);font-weight:600;font-size:.92rem;
+  padding:10px 16px;border-radius:30px;transition:.25s;white-space:nowrap;
+  position:relative;min-height:44px;display:inline-flex;align-items:center;
+}
+nav a:hover,nav a:focus-visible{background:var(--green-light);color:var(--green-dark);outline:none;}
+nav a.active{background:var(--green);color:#fff;}
+
+.nav-toggle{
+  display:none;background:transparent;border:none;color:var(--green-dark);
+  font-size:1.6rem;padding:10px 16px;min-width:48px;min-height:48px;
+  cursor:pointer;margin:6px auto;border-radius:12px;
+}
+.nav-toggle:active{background:var(--bg-alt);}
+@media(max-width:900px){
+  nav .nav-toggle{display:block;}
+  nav ul{max-height:0;overflow:hidden;flex-direction:column;gap:2px;padding:0 14px;transition:max-height .4s ease,padding .3s ease;}
+  nav ul.open{max-height:560px;padding:8px 14px 14px;}
+  nav a{width:100%;justify-content:center;font-size:1rem;}
+}
+
+/* ==========================================
+   5) SECTION BASE
+========================================== */
+section{max-width:1200px;margin:0 auto;padding:80px 20px;position:relative;}
+.section-title{
+  font-size:clamp(1.5rem,3.5vw,2.1rem);color:var(--green-dark);
+  margin-bottom:12px;display:flex;align-items:center;gap:12px;line-height:1.25;
+}
+.section-title .ic{font-size:1.6rem;display:inline-block;animation:wiggle 4s ease-in-out infinite;}
+@keyframes wiggle{0%,100%{transform:rotate(0);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);}}
+.section-sub{color:var(--text-muted);margin-bottom:40px;max-width:760px;font-size:clamp(.9rem,1.8vw,1rem);}
+
+.wave{display:block;width:100%;height:60px;margin-top:-1px;}
+
+/* ==========================================
+   6) CARDS
+========================================== */
+.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.card{
+  background:var(--card);border-radius:18px;padding:26px 24px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  transition:transform .3s,box-shadow .3s,border-color .3s,background .4s;
+  position:relative;overflow:hidden;opacity:0;transform:translateY(30px);
+}
+.card.show{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease,box-shadow .3s,border-color .3s;}
+.card::before{
+  content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(circle,rgba(46,125,50,.07) 0%,transparent 60%);
+  opacity:0;transition:.5s;pointer-events:none;
+}
+.card:hover::before{opacity:1;}
+.card .ico{
+  width:56px;height:56px;border-radius:16px;display:grid;place-items:center;
+  font-size:1.7rem;background:var(--orange-light);margin-bottom:16px;
+  transition:.4s cubic-bezier(.34,1.56,.64,1);
+}
+.card:hover .ico{transform:rotate(-10deg) scale(1.15);background:linear-gradient(135deg,#ffccbc,#ffab91);}
+.card h3{color:var(--green-dark);font-size:1.15rem;margin-bottom:8px;}
+.card p{color:var(--text-muted);font-size:.95rem;}
+@media (hover:hover) and (pointer:fine){
+  .card:hover{transform:translateY(-6px) perspective(900px) rotateX(2deg) rotateY(-2deg);box-shadow:var(--shadow-lg);border-color:var(--green-light);}
+}
+
+/* ==========================================
+   7) FACTS
+========================================== */
+.facts{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+.fact{
+  background:linear-gradient(135deg,var(--card) 0%,var(--bg-alt) 100%);
+  border-left:5px solid var(--orange);border-radius:12px;padding:16px 20px;
+  box-shadow:var(--shadow);display:flex;gap:14px;align-items:flex-start;
+  transition:.35s cubic-bezier(.34,1.56,.64,1);
+  opacity:0;transform:translateX(-25px);position:relative;overflow:hidden;
+}
+.fact.show{opacity:1;transform:none;}
+.fact::after{
+  content:"";position:absolute;top:0;right:0;width:4px;height:100%;
+  background:linear-gradient(to bottom,var(--orange),var(--green));
+  transform:scaleY(0);transform-origin:top;transition:.4s;
+}
+.fact:hover::after{transform:scaleY(1);}
+.fact:hover{transform:translateX(8px) scale(1.02);box-shadow:0 10px 26px rgba(255,112,67,.18);border-left-color:var(--green);}
+.fact .num{font-weight:800;color:var(--orange);font-size:1.15rem;min-width:30px;transition:.3s;}
+.fact:hover .num{color:var(--green);transform:scale(1.2);}
+.fact p{font-size:.95rem;color:var(--text);}
+
+/* ==========================================
+   8) HEALTH CALCULATORS
+========================================== */
+.calc-grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+.calc-card{
+  background:var(--card);border-radius:20px;padding:26px 22px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  transition:.4s;opacity:0;transform:translateY(30px);position:relative;overflow:hidden;
+}
+.calc-card.show{opacity:1;transform:none;}
+.calc-card::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,112,67,.05),rgba(46,125,50,.05));
+  opacity:0;transition:.4s;pointer-events:none;
+}
+.calc-card:hover::before{opacity:1;}
+.calc-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);}
+.calc-head{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.calc-head .ico{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,var(--orange-light),#ffab91);
+  display:grid;place-items:center;font-size:1.5rem;
+  transition:.3s;
+}
+.calc-card:hover .calc-head .ico{transform:rotate(-12deg) scale(1.1);}
+.calc-head h3{color:var(--green-dark);font-size:1.1rem;line-height:1.3;}
+.calc-desc{color:var(--text-muted);font-size:.85rem;margin-bottom:16px;}
+.calc-inputs{display:grid;gap:10px;margin-bottom:14px;}
+.calc-inputs.row-2{grid-template-columns:1fr 1fr;}
+.calc-inputs.row-3{grid-template-columns:1fr 1fr 1fr;}
+.calc-card input,.calc-card select{
+  padding:12px 14px;border:1.5px solid var(--border-soft);border-radius:10px;
+  background:var(--input-bg);color:var(--text);font-size:16px;
+  transition:.2s;width:100%;
+}
+.calc-card input:focus,.calc-card select:focus{
+  outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(46,125,50,.15);
+}
+.calc-btn{
+  width:100%;padding:12px;background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:.3s;min-height:46px;position:relative;overflow:hidden;
+}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(46,125,50,.35);}
+.calc-btn:active{transform:scale(.97);}
+
+.calc-result{
+  margin-top:18px;padding:16px;background:var(--bg-alt);border-radius:14px;
+  text-align:center;border:1px solid var(--border-soft);
+  animation:fadeInUp .4s ease;
+}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.calc-result.hidden{display:none;}
+
+.bmi-ring-wrap{position:relative;width:130px;height:130px;margin:0 auto 12px;}
+.bmi-ring{width:100%;height:100%;transform:rotate(-90deg);}
+.bmi-track{fill:none;stroke:var(--border);stroke-width:10;}
+.bmi-fill{fill:none;stroke:var(--green);stroke-width:10;stroke-linecap:round;
+  stroke-dasharray:314.16;stroke-dashoffset:314.16;
+  transition:stroke-dashoffset 1.2s cubic-bezier(.34,1.56,.64,1),stroke .4s;
+}
+.bmi-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.bmi-number{font-size:1.7rem;font-weight:800;color:var(--green-dark);line-height:1;}
+.bmi-label{font-size:.7rem;color:var(--text-muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+.bmi-cat{font-size:.9rem;font-weight:700;margin-top:6px;padding:4px 12px;border-radius:20px;display:inline-block;}
+.bmi-cat.under{background:#bbdefb;color:#0d47a1;}
+.bmi-cat.normal{background:#c8e6c9;color:#1b5e20;}
+.bmi-cat.over{background:#ffe0b2;color:#e65100;}
+.bmi-cat.obese{background:#ffcdd2;color:#b71c1c;}
+
+.big-result{font-size:2.2rem;font-weight:800;color:var(--green-dark);line-height:1;margin-bottom:4px;}
+.big-result small{font-size:.9rem;color:var(--text-muted);font-weight:600;}
+.result-note{font-size:.8rem;color:var(--text-muted);margin-top:6px;}
+
+/* ==========================================
+   9) TIPS CAROUSEL
+========================================== */
+.tips-carousel{
+  position:relative;max-width:820px;margin:0 auto;
+  min-height:220px;display:flex;align-items:center;justify-content:center;
+}
+.tip-card{
+  background:var(--card);border-radius:22px;padding:38px 32px;
+  box-shadow:var(--shadow-lg);border:1px solid var(--border);
+  text-align:center;max-width:100%;width:100%;
+  position:relative;overflow:hidden;
+  animation:tipIn .6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes tipIn{from{opacity:0;transform:scale(.92) translateY(20px);}to{opacity:1;transform:none;}}
+.tip-card::before{
+  content:"";position:absolute;top:-40px;right:-40px;width:140px;height:140px;
+  background:radial-gradient(circle,rgba(255,112,67,.15),transparent 70%);
+  border-radius:50%;
+}
+.tip-card::after{
+  content:"";position:absolute;bottom:-50px;left:-50px;width:160px;height:160px;
+  background:radial-gradient(circle,rgba(46,125,50,.12),transparent 70%);
+  border-radius:50%;
+}
+.tip-icon{
+  font-size:3rem;display:inline-block;margin-bottom:14px;
+  animation:tipFloat 3s ease-in-out infinite;position:relative;z-index:1;
+}
+@keyframes tipFloat{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-8px) rotate(5deg);}}
+.tip-title{font-size:1.3rem;color:var(--green-dark);margin-bottom:10px;position:relative;z-index:1;}
+.tip-text{color:var(--text-muted);font-size:1rem;max-width:520px;margin:0 auto;position:relative;z-index:1;}
+.tip-dots{display:flex;gap:8px;justify-content:center;margin-top:20px;}
+.tip-dots button{
+  width:10px;height:10px;border-radius:50%;border:none;
+  background:var(--border-soft);cursor:pointer;transition:.3s;padding:0;
+}
+.tip-dots button.active{background:var(--green);width:26px;border-radius:6px;}
+
+/* ==========================================
+   10) VITAMINS
+========================================== */
+.vit-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));}
+.vit-card{
+  background:var(--card);border-radius:16px;padding:20px 18px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  transition:.35s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.vit-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--orange),var(--green));
+  transform:scaleX(0);transform-origin:left;transition:.5s;
+}
+.vit-card:hover::before{transform:scaleX(1);}
+.vit-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.vit-card .vico{
+  font-size:2rem;margin-bottom:10px;display:inline-block;
+  transition:.4s cubic-bezier(.34,1.56,.64,1);
+}
+.vit-card:hover .vico{transform:scale(1.2) rotate(-10deg);}
+.vit-card .vname{font-weight:700;color:var(--green-dark);font-size:1rem;margin-bottom:4px;}
+.vit-card .vrole{color:var(--text-muted);font-size:.82rem;margin-bottom:8px;}
+.vit-card .vsrc{font-size:.78rem;color:var(--orange);font-weight:600;padding-top:8px;border-top:1px dashed var(--border-soft);}
+
+/* ==========================================
+   11) PLATE
+========================================== */
+.plate-intro{
+  background:linear-gradient(135deg,var(--bg-alt) 0%,#fff3e0 100%);
+  background-size:200% 200%;animation:gradientShift 8s ease infinite;
+  padding:24px 26px;border-radius:16px;margin-bottom:26px;
+  border:1px dashed var(--green-light);
+}
+[data-theme="dark"] .plate-intro{background:linear-gradient(135deg,var(--bg-alt) 0%,#2a1f0f 100%);}
+.plate-intro strong{color:var(--green-dark);}
+.plate-intro ul{margin-left:22px;color:var(--text-muted);font-size:.95rem;}
+
+.builder{display:grid;gap:26px;grid-template-columns:1fr 1fr;}
+@media(max-width:980px){.builder{grid-template-columns:1fr;}}
+
+.catalog h3,.plate-box h3{color:var(--green-dark);font-size:1.1rem;margin-bottom:14px;}
+
+.plate-tools{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.search-input{
+  flex:1;min-width:180px;padding:11px 16px;border:1.5px solid var(--border-soft);
+  border-radius:30px;background:var(--input-bg);color:var(--text);font-size:16px;
+  transition:.2s;
+}
+.search-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(46,125,50,.15);}
+
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.presets button{
+  padding:8px 14px;border:1.5px solid var(--border-soft);background:var(--card);
+  color:var(--text);border-radius:20px;font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:.25s;
+}
+.presets button:hover{background:var(--green-light);color:var(--green-dark);border-color:var(--green);}
+.presets button:active{transform:scale(.95);}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.filters button{
+  border:1.5px solid var(--green-light);background:var(--card);color:var(--green-dark);
+  padding:10px 16px;border-radius:30px;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:.2s;min-height:44px;
+}
+.filters button:active{transform:scale(.95);}
+.filters button.active{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 4px 14px rgba(46,125,50,.3);}
+
+.products{
+  display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  max-height:560px;overflow-y:auto;padding-right:6px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--green-light) transparent;
+}
+.products::-webkit-scrollbar{width:8px;}
+.products::-webkit-scrollbar-thumb{background:var(--green-light);border-radius:10px;}
+
+.product{
+  background:var(--card);border:1.5px solid var(--border);border-radius:14px;
+  padding:14px 10px;cursor:pointer;text-align:center;
+  transition:.25s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;min-height:110px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--text);
+}
+.product::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at center,rgba(46,125,50,.14),transparent 70%);
+  opacity:0;transition:.3s;
+}
+.product:hover::before,.product:focus-visible::before{opacity:1;}
+.product:hover,.product:focus-visible{
+  border-color:var(--green);box-shadow:0 8px 22px rgba(46,125,50,.18);outline:none;
+}
+.product:active{transform:scale(.94);}
+.product .em{font-size:2rem;display:block;margin-bottom:6px;transition:.3s cubic-bezier(.34,1.56,.64,1);}
+.product:hover .em{transform:scale(1.25) rotate(-8deg);}
+.product .nm{font-size:.85rem;font-weight:600;color:var(--text);line-height:1.25;}
+.product .kb{font-size:.72rem;color:var(--text-muted);margin-top:3px;}
+.product.adding{animation:popAdd .4s ease;}
+@keyframes popAdd{0%{transform:scale(1);}50%{transform:scale(1.15);background:var(--bg-alt);}100%{transform:scale(1);}}
+
+.plate-box{
+  background:var(--card);border-radius:18px;padding:22px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+}
+.plate-circle{
+  width:220px;height:220px;border-radius:50%;margin:0 auto 18px;position:relative;
+  background:radial-gradient(circle at 50% 50%,var(--card) 0 62%,var(--bg-alt) 62% 100%);
+  border:6px solid var(--border-soft);
+  box-shadow:inset 0 0 26px rgba(46,125,50,.12),0 10px 26px rgba(46,125,50,.15);
+  display:flex;flex-wrap:wrap;align-content:center;justify-content:center;
+  gap:2px;padding:30px;overflow:hidden;transition:.4s;
+  animation:plateBreath 4s ease-in-out infinite;
+}
+@keyframes plateBreath{
+  0%,100%{box-shadow:inset 0 0 26px rgba(46,125,50,.12),0 10px 26px rgba(46,125,50,.15);}
+  50%{box-shadow:inset 0 0 34px rgba(46,125,50,.22),0 14px 32px rgba(46,125,50,.22);}
+}
+.plate-circle.pulse{animation:platePulse .6s ease;}
+@keyframes platePulse{0%{transform:scale(1);}40%{transform:scale(1.08);border-color:var(--green);}100%{transform:scale(1);}}
+.plate-circle .empty{color:var(--text-muted);font-size:.85rem;text-align:center;padding:0 20px;}
+.plate-item{
+  font-size:1.5rem;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+  will-change:transform;transition:.2s;cursor:default;
+}
+.plate-item:hover{transform:scale(1.3) rotate(-10deg);}
+@keyframes popIn{0%{transform:scale(0) rotate(-180deg);opacity:0;}100%{transform:scale(1) rotate(0);opacity:1;}}
+
+.plate-list{margin-top:8px;}
+.plate-row{
+  display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
+  background:var(--card-alt);margin-bottom:6px;font-size:.9rem;
+  animation:slideInRight .35s ease;
+}
+@keyframes slideInRight{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:none;}}
+.plate-row .em{font-size:1.2rem;}
+.plate-row .nm{flex:1;font-weight:600;color:var(--text);}
+.plate-row input{
+  width:62px;padding:8px 6px;border:1.5px solid var(--green-light);
+  border-radius:8px;font-size:16px;text-align:center;background:var(--input-bg);
+  color:var(--text);transition:.2s;
+}
+.plate-row input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(46,125,50,.15);}
+.plate-row .unit{font-size:.75rem;color:var(--text-muted);}
+.plate-row .del{
+  background:#ffe7e0;border:none;color:#d84315;width:32px;height:32px;
+  border-radius:8px;cursor:pointer;font-size:1.1rem;line-height:1;
+  transition:.2s;min-width:32px;
+}
+[data-theme="dark"] .plate-row .del{background:#4a1c10;color:#ff8a65;}
+.plate-row .del:hover,.plate-row .del:active{background:#ff7043;color:#fff;transform:scale(1.1);}
+
+.totals{
+  margin-top:20px;background:linear-gradient(135deg,var(--bg-alt),var(--card-alt));
+  border-radius:14px;padding:18px;border:1px solid var(--border-soft);
+}
+.totals h4{color:var(--green-dark);font-size:1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+
+.totals-flex{display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:center;margin-bottom:16px;}
+@media(max-width:480px){.totals-flex{grid-template-columns:1fr;justify-items:center;}}
+
+.donut{
+  width:140px;height:140px;border-radius:50%;
+  background:conic-gradient(
+    var(--p-color) 0 calc(var(--p,0) * 1%),
+    var(--f-color) calc(var(--p,0) * 1%) calc((var(--p,0) + var(--f,0)) * 1%),
+    var(--c-color) calc((var(--p,0) + var(--f,0)) * 1%) 100%
+  );
+  position:relative;transition:.5s;
+  box-shadow:0 6px 20px rgba(0,0,0,.15);
+}
+.donut.empty{background:var(--border);}
+.donut-hole{
+  position:absolute;inset:18%;background:var(--card);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 12px rgba(0,0,0,.08);
+}
+.donut-total{font-size:1.1rem;font-weight:800;color:var(--green-dark);line-height:1;}
+.donut-lbl{font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.donut-legend{display:flex;flex-direction:column;gap:6px;font-size:.82rem;color:var(--text-muted);}
+.donut-legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+
+.total-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.total-cell{
+  background:var(--card);border-radius:12px;padding:12px;
+  text-align:center;box-shadow:0 2px 8px rgba(46,125,50,.06);transition:.3s;
+}
+.total-cell:hover{transform:translateY(-3px);box-shadow:0 6px 14px rgba(46,125,50,.12);}
+.total-cell .lbl{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;}
+.total-cell .val{font-size:1.3rem;font-weight:800;color:var(--green-dark);transition:.3s;}
+.total-cell .val small{font-size:.7rem;color:var(--text-muted);font-weight:600;}
+.total-cell .val.bump{animation:bump .4s ease;}
+@keyframes bump{0%{transform:scale(1);}50%{transform:scale(1.2);color:var(--orange);}100%{transform:scale(1);}}
+
+.progress-wrap{margin-top:16px;}
+.progress-row{margin-bottom:10px;}
+.progress-row .pr-lbl{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-muted);margin-bottom:4px;}
+.progress-bar{height:10px;background:var(--border-soft);border-radius:10px;overflow:hidden;position:relative;}
+.progress-bar > div{height:100%;border-radius:10px;transition:width .6s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;}
+.progress-bar > div::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  animation:shine 2s ease-in-out infinite;
+}
+@keyframes shine{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+.pb-kcal{background:linear-gradient(90deg,#ffb74d,#ff7043);}
+.pb-p{background:linear-gradient(90deg,#4fc3f7,#0288d1);}
+.pb-f{background:linear-gradient(90deg,#ba68c8,#7b1fa2);}
+.pb-c{background:linear-gradient(90deg,#81c784,#2e7d32);}
+
+.plate-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.action-btn{
+  padding:13px;border:none;border-radius:12px;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:.3s;min-height:48px;position:relative;overflow:hidden;
+}
+.action-btn span{position:relative;z-index:1;}
+.action-btn.save{background:linear-gradient(135deg,#0288d1,#0277bd);color:#fff;}
+.action-btn.print{background:linear-gradient(135deg,#7b1fa2,#4a148c);color:#fff;}
+.action-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.2);}
+.action-btn:active{transform:scale(.97);}
+.reset-btn{
+  width:100%;margin-top:10px;padding:14px;
+  background:linear-gradient(135deg,var(--orange),#e64a19);
+  color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:.3s;min-height:48px;position:relative;overflow:hidden;
+}
+.reset-btn span{position:relative;z-index:1;}
+.reset-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(230,74,25,.4);}
+.reset-btn:active{transform:scale(.97);}
+
+/* ==========================================
+   12) QUIZ
+========================================== */
+.quiz-box{
+  max-width:720px;margin:0 auto;background:var(--card);
+  border-radius:22px;padding:32px 28px;box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);position:relative;overflow:hidden;
+}
+.quiz-box::before{
+  content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(255,112,67,.1),transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.quiz-progress{
+  font-size:.85rem;color:var(--text-muted);margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.quiz-progress .bar{
+  flex:1;height:6px;background:var(--border-soft);border-radius:6px;
+  margin-left:14px;overflow:hidden;
+}
+.quiz-progress .bar > div{
+  height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--green));
+  border-radius:6px;transition:width .4s ease;
+}
+.quiz-question{font-size:1.15rem;font-weight:700;color:var(--green-dark);margin-bottom:20px;line-height:1.4;}
+.quiz-options{display:grid;gap:10px;}
+.quiz-opt{
+  padding:14px 18px;background:var(--card-alt);border:2px solid var(--border-soft);
+  border-radius:12px;font-size:.95rem;color:var(--text);cursor:pointer;
+  text-align:left;transition:.25s;font-weight:600;
+  display:flex;align-items:center;gap:12px;
+}
+.quiz-opt:hover:not(.disabled){border-color:var(--green);background:var(--bg-alt);transform:translateX(4px);}
+.quiz-opt:disabled,.quiz-opt.disabled{cursor:default;}
+.quiz-opt .badge{
+  width:28px;height:28px;border-radius:50%;background:var(--border-soft);
+  color:var(--text-muted);display:grid;place-items:center;font-weight:800;
+  font-size:.82rem;flex-shrink:0;transition:.3s;
+}
+.quiz-opt.correct{border-color:#2e7d32;background:#c8e6c9;color:#1b5e20;animation:correctFlash .6s ease;}
+.quiz-opt.correct .badge{background:#2e7d32;color:#fff;}
+.quiz-opt.wrong{border-color:#c62828;background:#ffcdd2;color:#b71c1c;animation:shake .5s ease;}
+.quiz-opt.wrong .badge{background:#c62828;color:#fff;}
+[data-theme="dark"] .quiz-opt.correct{background:#1e4620;color:#a5d6a7;border-color:#4caf50;}
+[data-theme="dark"] .quiz-opt.wrong{background:#4a1c1c;color:#ff8a80;border-color:#ef5350;}
+@keyframes correctFlash{0%,100%{transform:scale(1);}50%{transform:scale(1.03);}}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-10px);}40%{transform:translateX(10px);}60%{transform:translateX(-8px);}80%{transform:translateX(8px);}}
+
+.quiz-feedback{
+  margin-top:16px;padding:14px;border-radius:12px;font-size:.9rem;
+  opacity:0;transform:translateY(-6px);transition:.35s;
+}
+.quiz-feedback.show{opacity:1;transform:none;}
+.quiz-feedback.ok{background:#e8f5e9;color:#1b5e20;border-left:4px solid #2e7d32;}
+.quiz-feedback.bad{background:#ffebee;color:#b71c1c;border-left:4px solid #c62828;}
+[data-theme="dark"] .quiz-feedback.ok{background:#1e3320;color:#a5d6a7;}
+[data-theme="dark"] .quiz-feedback.bad{background:#3a1a1a;color:#ff8a80;}
+
+.quiz-next{
+  margin-top:16px;padding:13px 26px;background:linear-gradient(135deg,var(--green),var(--green-dark));
+  color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:.3s;min-height:48px;opacity:0;pointer-events:none;
+}
+.quiz-next.show{opacity:1;pointer-events:auto;}
+.quiz-next:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(46,125,50,.35);}
+
+.quiz-end{text-align:center;animation:fadeInUp .5s ease;}
+.quiz-end .score{
+  font-size:3rem;font-weight:800;
+  background:linear-gradient(135deg,var(--orange),var(--green));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+}
+.quiz-end .score-text{color:var(--text-muted);margin-bottom:20px;font-size:1rem;}
+.quiz-end button{
+  padding:13px 30px;background:linear-gradient(135deg,var(--orange),#e64a19);
+  color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:.3s;min-height:48px;
+}
+.quiz-end button:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(230,74,25,.4);}
+
+/* ==========================================
+   13) FOOTER / TEAM
+========================================== */
+footer{
+  background:linear-gradient(135deg,#1b5e20 0%,#0f2e14 100%);
+  color:#d9e8d9;padding:70px 20px calc(30px + var(--safe-bottom));
+  margin-top:40px;position:relative;overflow:hidden;
+}
+footer::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green-light),transparent);
+}
+footer .footer-inner{max-width:1200px;margin:0 auto;text-align:center;position:relative;z-index:1;}
+footer h2{color:#fff;font-size:clamp(1.3rem,3.5vw,1.6rem);margin-bottom:8px;}
+footer .footer-sub{color:#a8c8a8;margin-bottom:38px;font-size:.95rem;}
+.team{
+  display:grid;gap:16px;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  margin-bottom:38px;
+}
+.member{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:20px 12px;transition:.35s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.member::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(255,112,67,.15),transparent);
+  opacity:0;transition:.4s;
+}
+.member:hover::before{opacity:1;}
+.member:hover{background:rgba(255,255,255,.12);transform:translateY(-6px) scale(1.02);border-color:rgba(255,255,255,.25);}
+.member .av{
+  width:58px;height:58px;border-radius:50%;
+  background:linear-gradient(135deg,var(--orange),#e64a19);
+  display:grid;place-items:center;font-size:1.5rem;margin:0 auto 12px;
+  transition:.4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 6px 18px rgba(230,74,25,.35);
+}
+.member:hover .av{transform:rotate(-10deg) scale(1.12);box-shadow:0 10px 26px rgba(230,74,25,.5);}
+.member .mn{font-weight:700;color:#fff;font-size:.92rem;line-height:1.3;}
+.member .mr{font-size:.76rem;color:#a8c8a8;margin-top:4px;}
+
+/* Teacher highlighted */
+.member.teacher{
+  background:linear-gradient(135deg,rgba(255,183,77,.18),rgba(255,112,67,.18));
+  border:1.5px solid rgba(255,183,77,.45);
+  grid-column:1 / -1;
+  max-width:320px;
+  margin:0 auto 8px;
+}
+.member.teacher .av{
+  background:linear-gradient(135deg,#ffb74d,#ff7043);
+  box-shadow:0 6px 22px rgba(255,183,77,.5);
+}
+.member.teacher .mr{color:#ffd58a;font-weight:600;}
+.member.teacher::after{
+  content:"👑";
+  position:absolute;top:8px;right:12px;font-size:1.1rem;
+  animation:wiggle 3s ease-in-out infinite;
+}
+
+.copyright{border-top:1px solid rgba(255,255,255,.12);padding-top:24px;font-size:.85rem;color:#8fb28f;}
+
+/* ==========================================
+   14) REVEAL + RIPPLE + CONFETTI
+========================================== */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.show{opacity:1;transform:none;}
+.ripple{
+  position:absolute;border-radius:50%;background:rgba(255,255,255,.55);
+  transform:scale(0);animation:rippleAnim .6s ease-out;pointer-events:none;z-index:0;
+}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+.confetti-piece{
+  position:fixed;width:10px;height:10px;pointer-events:none;
+  z-index:10000;animation:confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0);opacity:1;}
+  100%{transform:translateY(105vh) rotate(720deg);opacity:0;}
+}
+
+/* ==========================================
+   15) RESPONSIVE + PRINT
+========================================== */
+@media(max-width:600px){
+  section{padding:55px 16px;}
+  .plate-circle{width:180px;height:180px;padding:24px;}
+  header{padding:calc(40px + var(--safe-top)) 16px 90px;}
+  .fixed-btn{width:42px;height:42px;font-size:1.1rem;}
+  .sound-toggle{right:calc(10px + 50px);}
+  .theme-toggle{right:10px;}
+  .music-toggle{right:calc(10px + 100px) !important;}
+  .total-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .total-cell{padding:10px 6px;}
+  .total-cell .val{font-size:1.15rem;}
+  .products{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));max-height:460px;}
+  .product{padding:12px 8px;min-height:100px;}
+  .product .em{font-size:1.7rem;}
+  .product .nm{font-size:.78rem;}
+  .plate-row{gap:6px;padding:8px;}
+  .plate-row .nm{font-size:.82rem;}
+  .plate-row input{width:56px;padding:6px 4px;}
+  .filters button{padding:8px 12px;font-size:.8rem;}
+  .back-top{width:46px;height:46px;right:14px;bottom:calc(14px + var(--safe-bottom));}
+  .quiz-box{padding:24px 18px;}
+  .quiz-question{font-size:1rem;}
+  .quiz-opt{font-size:.88rem;padding:12px 14px;}
+  .tip-card{padding:28px 20px;}
+  .tip-icon{font-size:2.4rem;}
+  .tip-title{font-size:1.1rem;}
+  .tip-text{font-size:.9rem;}
+  .calc-inputs.row-3{grid-template-columns:1fr;}
+  .totals-flex{grid-template-columns:1fr;justify-items:center;}
+  .team{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
+  .member{padding:16px 10px;}
+  .member .av{width:50px;height:50px;font-size:1.3rem;}
+  .member .mn{font-size:.85rem;}
+}
+@media(max-width:400px){
+  .grid{gap:14px;}
+  .card{padding:20px 18px;}
+  .card .ico{width:48px;height:48px;font-size:1.5rem;}
+  .products{grid-template-columns:repeat(2,1fr);}
+  .plate-actions{grid-template-columns:1fr;}
+  .team{grid-template-columns:repeat(2,1fr);gap:10px;}
+}
+@media(max-height:500px) and (orientation:landscape){
+  header{min-height:auto;padding:40px 20px 60px;}
+  .scroll-hint{display:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}
+  .reveal,.card,.fact,.calc-card{opacity:1 !important;transform:none !important;}
+}
+button,a,input,select{touch-action:manipulation;}
+
+@media print{
+  nav,.back-top,.fixed-btn,.scroll-progress,.toast,.plate-actions,.reset-btn,
+  .filters,.presets,.search-input,.plate-tools,.calc-btn,.quiz-box,#quiz,
+  .tips-carousel,.particles,.scroll-hint,.wave,audio{display:none !important;}
+  body{background:#fff;color:#000;}
+  section{page-break-inside:avoid;padding:20px;}
+  .plate-circle{border-color:#2e7d32 !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- Fixed buttons -->
+<button class="fixed-btn sound-toggle" id="soundToggle" aria-label="Ձայն">🔊</button>
+<button class="fixed-btn theme-toggle" id="themeToggle" aria-label="Թեմա">🌙</button>
+<button class="fixed-btn music-toggle" id="musicToggle" aria-label="Երաժշտություն">🎵</button>
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ========== HEADER ========== -->
+<header>
+  <div class="particles" id="particles"></div>
+  <div class="school">3-րդ Միջնակարգ դպրոց</div>
+  <h1 class="typewriter" id="mainTitle">Կենսաբանության նախագիծ 🥗</h1>
+  <p>Սննդի հետ կապված տեղեկություններ, հետաքրքիր փաստեր, սպորտային և ճիշտ սնուցում, առողջության հաշվիչներ և առողջ ափսեի կառուցում՝ ԿԲԺՈՒ-ի հաշվարկով։</p>
+  <div class="badge-row">
+    <span style="--i:0">🍎 Ճիշտ սնուցում</span>
+    <span style="--i:1">💪 Սպորտային սնուցում</span>
+    <span style="--i:2">🥦 Առողջ ափսե</span>
+    <span style="--i:3">🔬 Փաստեր</span>
+    <span style="--i:4">🧠 Quiz</span>
+  </div>
+  <a href="#sport" class="scroll-hint">
+    <span>Ոլորիր ներքև</span><span class="arrow">↓</span>
+  </a>
+</header>
+
+<!-- ========== NAV ========== -->
+<nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Ընտրացանկ">☰</button>
+  <ul id="navList">
+    <li><a href="#sport">💪 Սպորտ</a></li>
+    <li><a href="#right">🍏 Սնուցում</a></li>
+    <li><a href="#calculators">🧮 Հաշվիչներ</a></li>
+    <li><a href="#tips">💡 Խորհուրդ</a></li>
+    <li><a href="#vitamins">💊 Վիտամիններ</a></li>
+    <li><a href="#facts">🔬 Փաստեր</a></li>
+    <li><a href="#plate">🥗 Ափսե</a></li>
+    <li><a href="#quiz">🧠 Quiz</a></li>
+    <li><a href="#team">👥 Հեղինակներ</a></li>
+  </ul>
+</nav>
+
+<!-- ========== SPORT ========== -->
+<section id="sport">
+  <h2 class="section-title reveal"><span class="ic">💪</span> Սպորտային սնուցում</h2>
+  <p class="section-sub reveal">Սպորտով զբաղվելիս օրգանիզմին անհրաժեշտ է լրացուցիչ էներգիա և սննդանյութեր։ Ստորև ներկայացված են հիմնական սկզբունքները։</p>
+  <div class="grid">
+    <div class="card"><div class="ico">🥩</div><h3>Սպիտակուցներ</h3><p>Մկանների վերականգնման և աճի հիմքը։ Մարզիկներին անհրաժեշտ է օրական 1.4–2 գ սպիտակուց 1 կգ քաշի համար։ Աղբյուրներ՝ հավ, ձու, ձուկ, կաթնաշոռ, հատիկավորներ։</p></div>
+    <div class="card"><div class="ico">🍚</div><h3>Ածխաջրեր</h3><p>Էներգիայի հիմնական աղբյուրը։ Մարզվելուց առաջ անհրաժեշտ են բարդ ածխաջրեր (բրինձ, վարսակ, հնդկաձավար), որպեսզի էներգիան բավարարի ամբողջ մարզման համար։</p></div>
+    <div class="card"><div class="ico">🥑</div><h3>Ճարպեր</h3><p>Օգտակար ճարպերն աջակցում են հորմոնների արտադրությանը և վիտամինների կլանմանը։ Նախապատվություն տուր ավոկադոյին, ընկույզին, ձիթապտղի յուղին։</p></div>
+    <div class="card"><div class="ico">💧</div><h3>Ջուր</h3><p>Մարզման ընթացքում ջրի պաշարները արագ սպառվում են։ Խմիր 200–300 մլ ջուր յուրաքանչյուր 20 րոպեն մեկ մարզման ժամանակ։</p></div>
+    <div class="card"><div class="ico">⏰</div><h3>Ուտելու ռեժիմ</h3><p>Մարզումից 1.5–2 ժամ առաջ՝ թեթև սնունդ ածխաջրերով։ Մարզումից հետո 30–60 րոպեի ընթացքում՝ սպիտակուց + ածխաջրեր։</p></div>
+    <div class="card"><div class="ico">🍌</div><h3>Նախքան և հետո</h3><p>Մարզումից առաջ լավագույնն են բանանը, վարսակը կամ ամբողջական հացը։ Հետո՝ կաթնաշոռ, ձու, հավ կամ սպիտակուցային կոկտեյլ։</p></div>
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="var(--bg-alt)" d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z"/>
+</svg>
+
+<!-- ========== RIGHT NUTRITION ========== -->
+<section id="right" style="background:var(--bg-alt);max-width:100%;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h2 class="section-title reveal"><span class="ic">🍏</span> Ճիշտ սնուցում</h2>
+    <p class="section-sub reveal">Առողջ սնունդը ոչ միայն դիետա է, այլ կենսակերպ։ Այն ազդում է էներգիայի, տրամադրության, ուղեղի աշխատանքի և իմունիտետի վրա։</p>
+    <div class="grid">
+      <div class="card"><div class="ico">🍽️</div><h3>Ամբողջական ափսե</h3><p>Ափսեի կեսը՝ բանջարեղեն և մրգեր, քառորդը՝ սպիտակուց, քառորդը՝ բարդ ածխաջրեր։</p></div>
+      <div class="card"><div class="ico">🕐</div><h3>4–5 անգամ ուտել</h3><p>Օրական 3 հիմնական + 1–2 խորտիկ։ Սա պահպանում է արյան շաքարի կայուն մակարդակը։</p></div>
+      <div class="card"><div class="ico">🌅</div><h3>Նախաճաշ</h3><p>Նախաճաշը «արթնացնում» է նյութափոխանակությունը։ Պարունակի սպիտակուց և բարդ ածխաջրեր։</p></div>
+      <div class="card"><div class="ico">🚫</div><h3>Սահմանափակել</h3><p>Շաքար, աղ, տրանսճարպեր, գազավորված ըմպելիքներ, ֆաստ-ֆուդ։</p></div>
+      <div class="card"><div class="ico">💧</div><h3>Ջրի նորմա</h3><p>Օրական 1.5–2 լիտր մաքուր ջուր։ Ջուրը մասնակցում է բոլոր կենսաքիմիական գործընթացներին։</p></div>
+      <div class="card"><div class="ico">🌈</div><h3>Բազմազանություն</h3><p>Յուրաքանչյուր գույն տալիս է տարբեր վիտամիններ։ Ափսեը թող լինի «ծիածանի պես»։</p></div>
+    </div>
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="var(--bg)" d="M0,30 C240,0 480,60 720,30 C960,0 1200,60 1440,30 L1440,0 L0,0 Z"/>
+</svg>
+
+<!-- ========== HEALTH CALCULATORS ========== -->
+<section id="calculators">
+  <h2 class="section-title reveal"><span class="ic">🧮</span> Առողջության հաշվիչներ</h2>
+  <p class="section-sub reveal">Արագ հաշվիր քո ՄԶԻ-ն (BMI), ջրի օրական նորման և օրական կալորիաների պահանջը։</p>
+  <div class="calc-grid">
+
+    <div class="calc-card">
+      <div class="calc-head"><div class="ico">⚖️</div><h3>Մարմնի զանգվածի ինդեքս</h3></div>
+      <p class="calc-desc">ՄԶԻ = քաշ / հասակ² (կգ/մ²)</p>
+      <div class="calc-inputs row-2">
+        <input type="number" id="bmiWeight" placeholder="Քաշ (կգ)" inputmode="numeric">
+        <input type="number" id="bmiHeight" placeholder="Հասակ (սմ)" inputmode="numeric">
+      </div>
+      <button class="calc-btn" id="bmiBtn">Հաշվել</button>
+      <div class="calc-result hidden" id="bmiResult">
+        <div class="bmi-ring-wrap">
+          <svg class="bmi-ring" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" class="bmi-track"/>
+            <circle cx="60" cy="60" r="50" class="bmi-fill" id="bmiFill"/>
+          </svg>
+          <div class="bmi-center">
+            <div class="bmi-number" id="bmiNumber">0</div>
+            <div class="bmi-label">ՄԶԻ</div>
+          </div>
+        </div>
+        <div class="bmi-cat" id="bmiCat">—</div>
+      </div>
+    </div>
+
+    <div class="calc-card">
+      <div class="calc-head"><div class="ico">💧</div><h3>Ջրի օրական նորմա</h3></div>
+      <p class="calc-desc">≈ 35 մլ ջուր 1 կգ մարմնի քաշի համար</p>
+      <div class="calc-inputs">
+        <input type="number" id="waterWeight" placeholder="Քաշ (կգ)" inputmode="numeric">
+      </div>
+      <button class="calc-btn" id="waterBtn">Հաշվել</button>
+      <div class="calc-result hidden" id="waterResult">
+        <div class="big-result" id="waterNumber">0<small> լ</small></div>
+        <div class="result-note">Խմիր օրվա ընթացքում՝ հավասարաչափ</div>
+      </div>
+    </div>
+
+    <div class="calc-card">
+      <div class="calc-head"><div class="ico">🔥</div><h3>Օրական կալորիաներ</h3></div>
+      <p class="calc-desc">Միֆլին-Սան-Ժեոր բանաձևով (TDEE)</p>
+      <div class="calc-inputs row-2">
+        <input type="number" id="tdeeAge" placeholder="Տարիք" inputmode="numeric">
+        <select id="tdeeGender">
+          <option value="m">Արական</option>
+          <option value="f">Իգական</option>
+        </select>
+      </div>
+      <div class="calc-inputs row-2">
+        <input type="number" id="tdeeWeight" placeholder="Քաշ (կգ)" inputmode="numeric">
+        <input type="number" id="tdeeHeight" placeholder="Հասակ (սմ)" inputmode="numeric">
+      </div>
+      <div class="calc-inputs">
+        <select id="tdeeActivity">
+          <option value="1.2">Նստակյաց</option>
+          <option value="1.375">Թեթև ակտիվություն</option>
+          <option value="1.55" selected>Միջին ակտիվություն</option>
+          <option value="1.725">Բարձր ակտիվություն</option>
+          <option value="1.9">Շատ բարձր</option>
+        </select>
+      </div>
+      <button class="calc-btn" id="tdeeBtn">Հաշվել</button>
+      <div class="calc-result hidden" id="tdeeResult">
+        <div class="big-result" id="tdeeNumber">0<small> կկալ</small></div>
+        <div class="result-note" id="tdeeNote">—</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== TIPS ========== -->
+<section id="tips" style="background:var(--bg-alt);max-width:100%;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h2 class="section-title reveal" style="justify-content:center"><span class="ic">💡</span> Օրական խորհուրդ</h2>
+    <p class="section-sub reveal" style="text-align:center;margin-left:auto;margin-right:auto">Փոքր սովորություններ, որ մեծ ազդեցություն ունեն առողջության վրա։</p>
+    <div class="tips-carousel">
+      <div id="tipCardHost"></div>
+    </div>
+    <div class="tip-dots" id="tipDots"></div>
+  </div>
+</section>
+
+<!-- ========== VITAMINS ========== -->
+<section id="vitamins">
+  <h2 class="section-title reveal"><span class="ic">💊</span> Վիտամիններ և միներալներ</h2>
+  <p class="section-sub reveal">Օրգանիզմին անհրաժեշտ միկրոտարրեր և դրանց աղբյուրները։</p>
+  <div class="vit-grid" id="vitGrid"></div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="var(--bg-alt)" d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z"/>
+</svg>
+
+<!-- ========== FACTS ========== -->
+<section id="facts" style="background:var(--bg-alt);max-width:100%;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h2 class="section-title reveal"><span class="ic">🔬</span> Հետաքրքիր փաստեր</h2>
+    <p class="section-sub reveal">Զարմանալի փաստեր սննդի և մարդու օրգանիզմի մասին։</p>
+    <div class="facts" id="factsList"></div>
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="var(--bg)" d="M0,30 C240,0 480,60 720,30 C960,0 1200,60 1440,30 L1440,0 L0,0 Z"/>
+</svg>
+
+<!-- ========== PLATE ========== -->
+<section id="plate">
+  <h2 class="section-title reveal"><span class="ic">🥗</span> Առողջ ափսե — ԿԲԺՈՒ հաշվիչ</h2>
+  <p class="section-sub reveal">Ընտրիր մթերքները, որոշիր քանակը (գրամ) և տես ԿԲԺՈՒ-ն՝ իրական ժամանակում։ Տվյալները ավտոմատ պահվում են։</p>
+
+  <div class="plate-intro reveal">
+    <strong>🥦 Առողջ ափսեի սկզբունքը՝</strong>
+    <ul>
+      <li>Կեսը՝ բանջարեղեն և մրգեր</li>
+      <li>Քառորդը՝ սպիտակուց (միս, ձուկ, ձու, հատիկավոր)</li>
+      <li>Քառորդը՝ բարդ ածխաջրեր (բրինձ, կարտոֆիլ, հաց)</li>
+      <li>Փոքր քանակությամբ՝ առողջ ճարպեր</li>
+    </ul>
+  </div>
+
+  <div class="builder">
+    <div class="catalog reveal">
+      <h3>🍽️ Մթերքներ</h3>
+      <div class="plate-tools">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Փնտրիր մթերք...">
+      </div>
+      <div class="presets">
+        <button data-preset="sport">💪 Սպորտի օր</button>
+        <button data-preset="balanced">⚖️ Հավասարակշռված</button>
+        <button data-preset="loss">📉 Քաշի կորուստ</button>
+      </div>
+      <div class="filters" id="filters">
+        <button data-cat="all" class="active">Բոլորը</button>
+        <button data-cat="protein">Սպիտակուց</button>
+        <button data-cat="carb">Ածխաջրեր</button>
+        <button data-cat="fat">Ճարպեր</button>
+        <button data-cat="veg">Բանջարեղեն</button>
+        <button data-cat="fruit">Միրգ</button>
+        <button data-cat="dairy">Կաթնամթերք</button>
+      </div>
+      <div class="products" id="products"></div>
+    </div>
+
+    <div class="plate-box reveal">
+      <h3>🍽️ Քո առողջ ափսեն</h3>
+      <div class="plate-circle" id="plateCircle">
+        <div class="empty">Սկսիր ավելացնել մթերքներ →</div>
+      </div>
+      <div class="plate-list" id="plateList"></div>
+
+      <div class="totals">
+        <h4>📊 Ընդհանուր ԿԲԺՈՒ</h4>
+        <div class="totals-flex">
+          <div class="donut empty" id="donut">
+            <div class="donut-hole">
+              <div class="donut-total" id="donutTotal">0</div>
+              <div class="donut-lbl">կկալ</div>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <span><i style="background:var(--p-color)"></i> Սպիտակուց</span>
+            <span><i style="background:var(--f-color)"></i> Ճարպ</span>
+            <span><i style="background:var(--c-color)"></i> Ածխաջրեր</span>
+          </div>
+        </div>
+        <div class="total-grid">
+          <div class="total-cell"><div class="lbl">Կալորիա</div><div class="val" id="totKcal">0<small> կկալ</small></div></div>
+          <div class="total-cell"><div class="lbl">Սպիտակուց</div><div class="val" id="totP">0<small> գ</small></div></div>
+          <div class="total-cell"><div class="lbl">Ճարպ</div><div class="val" id="totF">0<small> գ</small></div></div>
+          <div class="total-cell"><div class="lbl">Ածխաջրեր</div><div class="val" id="totC">0<small> գ</small></div></div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-row"><div class="pr-lbl"><span>Կալորիա (~2000)</span><span id="pctKcal">0%</span></div><div class="progress-bar"><div class="pb-kcal" id="barKcal" style="width:0%"></div></div></div>
+          <div class="progress-row"><div class="pr-lbl"><span>Սպիտակուց (~75գ)</span><span id="pctP">0%</span></div><div class="progress-bar"><div class="pb-p" id="barP" style="width:0%"></div></div></div>
+          <div class="progress-row"><div class="pr-lbl"><span>Ճարպ (~70գ)</span><span id="pctF">0%</span></div><div class="progress-bar"><div class="pb-f" id="barF" style="width:0%"></div></div></div>
+          <div class="progress-row"><div class="pr-lbl"><span>Ածխաջրեր (~250գ)</span><span id="pctC">0%</span></div><div class="progress-bar"><div class="pb-c" id="barC" style="width:0%"></div></div></div>
+        </div>
+
+        <div class="plate-actions">
+          <button class="action-btn save" id="saveBtn"><span>💾 Պահել</span></button>
+          <button class="action-btn print" id="printBtn"><span>🖨️ Տպել</span></button>
+        </div>
+        <button class="reset-btn" id="resetBtn"><span>🔄 Մաքրել ափսեն</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="var(--bg-alt)" d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z"/>
+</svg>
+
+<!-- ========== QUIZ ========== -->
+<section id="quiz" style="background:var(--bg-alt);max-width:100%;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h2 class="section-title reveal" style="justify-content:center"><span class="ic">🧠</span> Ստուգիր գիտելիքներդ</h2>
+    <p class="section-sub reveal" style="text-align:center;margin-left:auto;margin-right:auto">5 հարց սնուցման մասին։ Կստանա՞ս ամեն ինչ ճիշտ։</p>
+    <div class="quiz-box reveal" id="quizBox"></div>
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+  <path fill="#1b5e20" d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z"/>
+</svg>
+
+<!-- ========== FOOTER / TEAM ========== -->
+<footer id="team">
+  <div class="footer-inner">
+    <h2>👥 Նախագծի հեղինակներ</h2>
+    <p class="footer-sub">3-րդ Միջնակարգ դպրոց · «Կենսաբանության նախագիծ» · «Սննդի հետ կապված տեղեկություններ, Հետաքրքիր փաստեր»</p>
+
+    <div class="team">
+      <!-- 👩‍🏫 Ուսուցչուհի -->
+      <div class="member teacher">
+        <div class="av">👩‍🏫</div>
+        <div class="mn">Արլենա Միքայելյան</div>
+        <div class="mr">Ուսուցչուհի · Նախագծի ղեկավար</div>
+      </div>
+
+      <!-- 👨‍🎓 Աշակերտներ -->
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Նարե Թումանյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👨‍🎓</div><div class="mn">Ջորջ Ներսիսյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Մարի Սահակյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Արինա Մովսիսյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👨‍🎓</div><div class="mn">Արտյոմ Աղաբեկյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Անահիտ Հովհանիսյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👨‍🎓</div><div class="mn">Լյովա Հովհանիսյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Իրինա Գևորգյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Ալյոնա Հովհաննիսյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Սառա Մանուչարյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Մարի Բաղդասարյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Լուիզա Ջհանգիրյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👨‍🎓</div><div class="mn">Էրիկ Մաթևոսյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👨‍🎓</div><div class="mn">Արմեն Մինասյան</div><div class="mr">Աշակերտ</div></div>
+      <div class="member"><div class="av">👩‍🎓</div><div class="mn">Նազենի Բաղդասարյան</div><div class="mr">Աշակերտ</div></div>
+    </div>
+
+    <div class="copyright">© 2025 · 3-րդ Միջնակարգ դպրոց · Կենսաբանության նախագիծ 🥗</div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" aria-label="Վերև">↑</button>
+
+<!-- 🎵 ՖՈՆԱՅԻՆ ԵՐԱԺՇՏՈՒԹՅՈՒՆ -->
+<audio id="bgMusic" loop preload="auto" autoplay>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* ==========================================
+   0) UTILITIES
+========================================== */
+const $ = (s, p = document) => p.querySelector(s);
+const $$ = (s, p = document) => [...p.querySelectorAll(s)];
+const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+/* ==========================================
+   1) THEME
+========================================== */
+const themeToggle = $('#themeToggle');
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+themeToggle.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  themeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('theme', next);
+  playTone(next === 'dark' ? 400 : 600, 0.06);
+});
+
+/* ==========================================
+   2) SOUND
+========================================== */
+let soundEnabled = localStorage.getItem('sound') !== 'off';
+let audioCtx = null;
+const soundToggle = $('#soundToggle');
+soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+
+function initAudio(){
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ return; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playTone(freq, dur = 0.08, type = 'sine', vol = 0.05){
+  if (!soundEnabled) return;
+  initAudio();
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + dur);
+}
+function playAdd(){ playTone(660, 0.05); setTimeout(() => playTone(880, 0.09), 55); }
+function playRemove(){ playTone(380, 0.1, 'sine', 0.04); }
+function playSuccess(){ playTone(523, 0.1); setTimeout(() => playTone(659, 0.1), 80); setTimeout(() => playTone(784, 0.15), 160); }
+function playError(){ playTone(200, 0.16, 'sawtooth', 0.04); }
+
+soundToggle.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+  localStorage.setItem('sound', soundEnabled ? 'on' : 'off');
+  if (soundEnabled) playTone(660, 0.08);
+});
+
+/* ==========================================
+   3) TOAST
+========================================== */
+let toastTimeout;
+function showToast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ==========================================
+   4) CONFETTI
+========================================== */
+function launchConfetti(){
+  const colors = ['#2e7d32','#ff7043','#a5d6a7','#ffccbc','#ffb74d','#4fc3f7','#ba68c8','#81c784'];
+  for (let i = 0; i < 50; i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = '-20px';
+    p.style.background = colors[(Math.random() * colors.length) | 0];
+    const size = 6 + Math.random() * 8;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    p.style.animationDuration = (2 + Math.random() * 2) + 's';
+    p.style.animationDelay = (Math.random() * 0.4) + 's';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 5000);
+  }
+}
+
+/* ==========================================
+   5) SCROLL PROGRESS + BACK TOP + PARALLAX
+========================================== */
+const scrollProgress = $('#scrollProgress');
+const backTop = $('#backTop');
+let ticking = false;
+const isDesktop = matchMedia('(hover:hover) and (pointer:fine)').matches;
+const headerParticles = () => $$('.particles span');
+
+window.addEventListener('scroll', () => {
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(() => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    scrollProgress.style.width = pct + '%';
+    if (window.scrollY > 500) backTop.classList.add('show');
+    else backTop.classList.remove('show');
+    if (isDesktop && window.scrollY < window.innerHeight){
+      headerParticles().forEach((el, i) => {
+        const speed = 0.15 + (i % 4) * 0.08;
+        el.style.transform = `translateY(${window.scrollY * speed}px) rotate(${window.scrollY * 0.05}deg)`;
+      });
+    }
+    ticking = false;
+  });
+}, { passive: true });
+
+backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* ==========================================
+   6) MOBILE NAV
+========================================== */
+const navToggle = $('#navToggle');
+const navList = $('#navList');
+navToggle.addEventListener('click', () => {
+  navList.classList.toggle('open');
+  navToggle.textContent = navList.classList.contains('open') ? '✕' : '☰';
+});
+$$('#navList a').forEach(a => {
+  a.addEventListener('click', () => {
+    if (window.innerWidth <= 900){
+      navList.classList.remove('open');
+      navToggle.textContent = '☰';
+    }
+  });
+});
+
+/* ==========================================
+   7) PARTICLES + TYPEWRITER
+========================================== */
+const emojis = ['🍎','🥦','🍌','🥑','🍇','🥕','🍓','🥝','🥬','🍊','🥜','🐟','🍅','🥒','🍑'];
+const particlesEl = $('#particles');
+for (let i = 0; i < 20; i++){
+  const s = document.createElement('span');
+  s.textContent = emojis[i % emojis.length];
+  s.style.left = Math.random() * 100 + '%';
+  s.style.animationDuration = (14 + Math.random() * 16) + 's';
+  s.style.animationDelay = (-Math.random() * 20) + 's';
+  s.style.fontSize = (18 + Math.random() * 26) + 'px';
+  particlesEl.appendChild(s);
+}
+
+const titleEl = $('#mainTitle');
+const titleText = titleEl.textContent;
+titleEl.textContent = '';
+let charIdx = 0;
+function typeWrite(){
+  if (charIdx < titleText.length){
+    titleEl.textContent += titleText[charIdx++];
+    setTimeout(typeWrite, 55 + Math.random() * 40);
+  }
+}
+setTimeout(typeWrite, 800);
+
+/* ==========================================
+   8) FACTS
+========================================== */
+const facts = [
+  "Մարդը կարող է ապրել առանց սննդի մոտ 3 շաբաթ, իսկ առանց ջրի՝ ընդամենը 3–4 օր։",
+  "Բանանը, չնայած իր չափին, բուսաբանորեն համարվում է հատապտուղ։",
+  "Մեղրը գործնականում չի փչանում հազարամյակներ շարունակ։",
+  "Լոլիկը Եվրոպայում սկզբում համարվել է թունավոր և օգտագործվել է միայն որպես դեկորացիա։",
+  "Մարդու աղիքներում ապրում է մոտ 100 տրիլիոն բակտերիա։",
+  "Ուղեղը սպառում է օրգանիզմի ողջ էներգիայի մոտ 20%-ը։",
+  "Գազարը սկզբում եղել է մանուշակագույն, իսկ նարնջագույնը՝ սելեկցիայի արդյունք։",
+  "Մարդու մարմինը ~60%-ով բաղկացած է ջրից, իսկ արյունը՝ 92%-ով։",
+  "Մարդը օրական արտադրում է 1–2 լիտր թուք։",
+  "Ելակը միակ միրգն է, որի սերմերը դրսում են։",
+  "Չիլիի սրությունը չափվում է Սկովիլի սանդղակով։",
+  "Խնձորը ջրի մեջ չի սուզվում, որովհետև դրա 25%-ը օդ է։",
+  "Մարդու լեզվի հետքը յուրահատուկ է, ինչպես մատնահետքը։",
+  "Սուրճը երկրորդ ամենաշատ վաճառվող ապրանքն է նավթից հետո։",
+  "Մեկ բաժակ նռան հյութը պարունակում է օրական վիտամին C-ի 40%-ը։"
+];
+const factsList = $('#factsList');
+facts.forEach((f, i) => {
+  const div = document.createElement('div');
+  div.className = 'fact';
+  div.style.transitionDelay = (i * 0.04) + 's';
+  div.innerHTML = `<span class="num">${String(i+1).padStart(2,'0')}</span><p>${f}</p>`;
+  factsList.appendChild(div);
+});
+
+/* ==========================================
+   9) VITAMINS
+========================================== */
+const vitamins = [
+  { icon:'🍊', name:'Վիտամին C', role:'Իմունիտետ, կոլագեն, հակաօքսիդանտ', src:'Նարինջ, կիվի, պղպեղ' },
+  { icon:'🥕', name:'Վիտամին A', role:'Տեսողություն, մաշկ, իմունիտետ', src:'Գազար, դդում, սպանախ' },
+  { icon:'☀️', name:'Վիտամին D', role:'Ոսկորներ, իմունիտետ', src:'Արև, ձուկ, ձու' },
+  { icon:'🥜', name:'Վիտամին E', role:'Հակաօքսիդանտ, մաշկ', src:'Ընկույզ, սերմեր' },
+  { icon:'🥬', name:'Վիտամին K', role:'Արյան մակարդում, ոսկորներ', src:'Կանաչ տերևավոր' },
+  { icon:'🍌', name:'Կալիում', role:'Սիրտ, մկաններ, ճնշում', src:'Բանան, կարտոֆիլ' },
+  { icon:'🌾', name:'Երկաթ', role:'Արյան կազմություն', src:'Միս, հատիկավոր' },
+  { icon:'🥛', name:'Կալցիում', role:'Ոսկորներ, ատամներ', src:'Կաթ, պանիր, կաթնաշոռ' },
+  { icon:'🌰', name:'Մագնեզիում', role:'Նյարդեր, մկաններ', src:'Ընկույզ, սպանախ' },
+  { icon:'🐟', name:'Օմեգա-3', role:'Սիրտ, ուղեղ', src:'Սաղմոն, թունա' },
+];
+const vitGrid = $('#vitGrid');
+vitamins.forEach((v, i) => {
+  const div = document.createElement('div');
+  div.className = 'vit-card reveal';
+  div.style.transitionDelay = (i * 0.05) + 's';
+  div.innerHTML = `
+    <div class="vico">${v.icon}</div>
+    <div class="vname">${v.name}</div>
+    <div class="vrole">${v.role}</div>
+    <div class="vsrc">${v.src}</div>
+  `;
+  vitGrid.appendChild(div);
+});
+
+/* ==========================================
+   10) TIPS CAROUSEL
+========================================== */
+const tips = [
+  { icon:'💧', title:'Խմիր բավական ջուր', text:'Օրական 1.5–2 լիտր ջուր։ Մարզման ժամանակ ավելի շատ։ Ջուրը բարելավում է մարսողությունը և մաշկի վիճակը։' },
+  { icon:'🥗', title:'Կանաչի ավելացրու', text:'Ամեն օր կեր 1 բաժին կանաչ տերևավոր բանջարեղեն։ Այն հարուստ է երկաթով, կալցիումով և վիտամին K-ով։' },
+  { icon:'🍎', title:'Միրգ որպես խորտիկ', text:'Փոխարինիր կոնֆետները մրգով։ Խնձորը, բանանը կամ նարինջը հիանալի խորտիկ են՝ էներգիա և վիտամիններ։' },
+  { icon:'🕐', title:'Մի բաց թող նախաճաշը', text:'Նախաճաշը «արթնացնում» է նյութափոխանակությունը։ Ավելացրու սպիտակուց և բարդ ածխաջրեր՝ ամբողջ օրվա էներգիայի համար։' },
+  { icon:'🥜', title:'Ընկույզ՝ խորտիկին', text:'Մի բուռ ընկույզ (20–30գ) հիանալի խորտիկ է՝ առողջ ճարպերով, սպիտակուցով և մագնեզիումով։' },
+  { icon:'🚶', title:'Քայլիր ուտելուց հետո', text:'10–15 րոպե քայլք ուտելուց հետո բարելավում է արյան շաքարի վերահսկումը և մարսողությունը։' },
+  { icon:'🌈', title:'Կեր «ծիածանը»', text:'Ձգտիր օրական օգտագործել տարբեր գույնի մթերքներ՝ կարմիր, կանաչ, դեղին, նարնջագույն, մանուշակագույն։' },
+  { icon:'😴', title:'Քուն և սնունդ', text:'7–9 ժամ քունը կարևոր է նյութափոխանակության համար։ Ուշ ընթրիքը կարող է խանգարել քունը։' },
+];
+let tipIdx = 0;
+let tipTimer;
+
+function renderTip(idx){
+  const t = tips[idx];
+  $('#tipCardHost').innerHTML = `
+    <div class="tip-card" key="${idx}">
+      <div class="tip-icon">${t.icon}</div>
+      <div class="tip-title">${t.title}</div>
+      <div class="tip-text">${t.text}</div>
+    </div>
+  `;
+  $$('#tipDots button').forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+function renderDots(){
+  const dots = $('#tipDots');
+  dots.innerHTML = '';
+  tips.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'Խորհուրդ ' + (i+1));
+    if (i === tipIdx) b.classList.add('active');
+    b.addEventListener('click', () => {
+      tipIdx = i;
+      renderTip(tipIdx);
+      restartTipTimer();
+    });
+    dots.appendChild(b);
+  });
+}
+function nextTip(){
+  tipIdx = (tipIdx + 1) % tips.length;
+  renderTip(tipIdx);
+}
+function restartTipTimer(){
+  clearInterval(tipTimer);
+  tipTimer = setInterval(nextTip, 6000);
+}
+renderTip(0);
+renderDots();
+restartTipTimer();
+
+/* ==========================================
+   11) HEALTH CALCULATORS
+========================================== */
+const bmiBtn = $('#bmiBtn');
+bmiBtn.addEventListener('click', () => {
+  const w = parseFloat($('#bmiWeight').value);
+  const h = parseFloat($('#bmiHeight').value) / 100;
+  if (!w || !h || w <= 0 || h <= 0){
+    showToast('⚠️ Մուտքագրիր ճիշտ արժեքներ'); return;
+  }
+  const bmi = w / (h * h);
+  const bmiRound = Math.round(bmi * 10) / 10;
+
+  const res = $('#bmiResult');
+  res.classList.remove('hidden');
+
+  animateValue($('#bmiNumber'), 0, bmiRound, 800, 1);
+
+  const pct = clamp((bmi - 15) / 25, 0, 1);
+  const circ = 2 * Math.PI * 50;
+  const fill = $('#bmiFill');
+  fill.style.strokeDashoffset = circ * (1 - pct);
+
+  let cat, cls, color;
+  if (bmi < 18.5){ cat = 'Քաշի պակաս'; cls = 'under'; color = '#0288d1'; }
+  else if (bmi < 25){ cat = 'Նորմալ'; cls = 'normal'; color = '#2e7d32'; }
+  else if (bmi < 30){ cat = 'Ավելորդ քաշ'; cls = 'over'; color = '#ef6c00'; }
+  else { cat = 'Ճարպակալում'; cls = 'obese'; color = '#c62828'; }
+  fill.style.stroke = color;
+  const catEl = $('#bmiCat');
+  catEl.className = 'bmi-cat ' + cls;
+  catEl.textContent = cat;
+  playSuccess();
+});
+
+$('#waterBtn').addEventListener('click', () => {
+  const w = parseFloat($('#waterWeight').value);
+  if (!w || w <= 0){ showToast('⚠️ Մուտքագրիր քաշը'); return; }
+  const liters = (w * 0.035).toFixed(1);
+  const res = $('#waterResult');
+  res.classList.remove('hidden');
+  animateValue($('#waterNumber'), 0, parseFloat(liters), 700, 1, ' լ');
+  playSuccess();
+});
+
+$('#tdeeBtn').addEventListener('click', () => {
+  const age = parseFloat($('#tdeeAge').value);
+  const w = parseFloat($('#tdeeWeight').value);
+  const h = parseFloat($('#tdeeHeight').value);
+  const gender = $('#tdeeGender').value;
+  const act = parseFloat($('#tdeeActivity').value);
+
+  if (!age || !w || !h || age < 5 || age > 120){
+    showToast('⚠️ Լրացրու բոլոր դաշտերը'); return;
+  }
+
+  let bmr;
+  if (gender === 'm') bmr = 10 * w + 6.25 * h - 5 * age + 5;
+  else bmr = 10 * w + 6.25 * h - 5 * age - 161;
+
+  const tdee = Math.round(bmr * act);
+  const res = $('#tdeeResult');
+  res.classList.remove('hidden');
+  animateValue($('#tdeeNumber'), 0, tdee, 900, 0, ' կկալ');
+
+  const lossLow = Math.round(tdee - 500);
+  const gainHigh = Math.round(tdee + 300);
+  $('#tdeeNote').textContent = `Քաշի կորստի համար՝ ~${lossLow} կկալ · Քաշ հավաքելու համար՝ ~${gainHigh} կկալ`;
+  playSuccess();
+});
+
+function animateValue(el, from, to, duration = 600, decimals = 1, suffix = ''){
+  const start = performance.now();
+  function tick(now){
+    const prog = Math.min((now - start) / duration, 1);
+    const v = from + (to - from) * easeOutCubic(prog);
+    const formatted = decimals > 0 ? v.toFixed(decimals) : Math.round(v);
+    el.innerHTML = `${formatted}${suffix ? `<small>${suffix}</small>` : ''}`;
+    if (prog < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ==========================================
+   12) PRODUCTS DATA
+========================================== */
+const products = [
+  { id:"chicken", name:"Հավի կրծքամիս", em:"🍗", cat:"protein", kcal:165, p:31,  f:3.6, c:0   },
+  { id:"beef",    name:"Տավարի միս",     em:"🥩", cat:"protein", kcal:250, p:26,  f:15,  c:0   },
+  { id:"salmon",  name:"Սաղմոն",         em:"🐟", cat:"protein", kcal:208, p:20,  f:13,  c:0   },
+  { id:"egg",     name:"Ձու",            em:"🥚", cat:"protein", kcal:155, p:13,  f:11,  c:1.1 },
+  { id:"tuna",    name:"Թունա",          em:"🐠", cat:"protein", kcal:132, p:28,  f:1.3, c:0   },
+  { id:"rice",    name:"Բրինձ",          em:"🍚", cat:"carb",    kcal:130, p:2.7, f:0.3, c:28  },
+  { id:"buck",    name:"Հնդկաձավար",     em:"🌾", cat:"carb",    kcal:343, p:13,  f:3.4, c:71  },
+  { id:"oats",    name:"Վարսակի փաթիլ",  em:"🥣", cat:"carb",    kcal:389, p:17,  f:7,   c:66  },
+  { id:"potato",  name:"Կարտոֆիլ",       em:"🥔", cat:"carb",    kcal:77,  p:2,   f:0.1, c:17  },
+  { id:"bread",   name:"Ամբողջ. հաց",    em:"🍞", cat:"carb",    kcal:265, p:9,   f:3.2, c:49  },
+  { id:"avocado", name:"Ավոկադո",        em:"🥑", cat:"fat",     kcal:160, p:2,   f:15,  c:9   },
+  { id:"walnut",  name:"Ընկույզ",        em:"🌰", cat:"fat",     kcal:654, p:15,  f:65,  c:14  },
+  { id:"olive",   name:"Ձիթապտղի յուղ",  em:"🫒", cat:"fat",     kcal:884, p:0,   f:100, c:0   },
+  { id:"almond",  name:"Նուշ",           em:"🥜", cat:"fat",     kcal:579, p:21,  f:50,  c:22  },
+  { id:"broccoli",name:"Բրոկոլի",        em:"🥦", cat:"veg",     kcal:34,  p:2.8, f:0.4, c:7   },
+  { id:"tomato",  name:"Լոլիկ",          em:"🍅", cat:"veg",     kcal:18,  p:0.9, f:0.2, c:3.9 },
+  { id:"cucumber",name:"Վարունգ",        em:"🥒", cat:"veg",     kcal:15,  p:0.7, f:0.1, c:3.6 },
+  { id:"carrot",  name:"Գազար",          em:"🥕", cat:"veg",     kcal:41,  p:0.9, f:0.2, c:10  },
+  { id:"pepper",  name:"Պղպեղ",          em:"🫑", cat:"veg",     kcal:26,  p:1,   f:0.3, c:6   },
+  { id:"spinach", name:"Սպանախ",         em:"🥬", cat:"veg",     kcal:23,  p:2.9, f:0.4, c:3.6 },
+  { id:"banana",  name:"Բանան",          em:"🍌", cat:"fruit",   kcal:89,  p:1.1, f:0.3, c:23  },
+  { id:"apple",   name:"Խնձոր",          em:"🍎", cat:"fruit",   kcal:52,  p:0.3, f:0.2, c:14  },
+  { id:"straw",   name:"Ելակ",           em:"🍓", cat:"fruit",   kcal:32,  p:0.7, f:0.3, c:7.7 },
+  { id:"apricot", name:"Ծիրան",          em:"🍑", cat:"fruit",   kcal:48,  p:1.4, f:0.4, c:11  },
+  { id:"orange",  name:"Նարինջ",         em:"🍊", cat:"fruit",   kcal:47,  p:0.9, f:0.1, c:12  },
+  { id:"milk",    name:"Կաթ",            em:"🥛", cat:"dairy",   kcal:42,  p:3.4, f:1,   c:5   },
+  { id:"cottage", name:"Կաթնաշոռ",       em:"🧀", cat:"dairy",   kcal:98,  p:11,  f:4.3, c:3.4 },
+  { id:"yogurt",  name:"Յոգուրտ",        em:"🍶", cat:"dairy",   kcal:59,  p:10,  f:0.4, c:3.6 },
+  { id:"cheese",  name:"Պանիր",          em:"🧀", cat:"dairy",   kcal:350, p:25,  f:27,  c:2   }
+];
+
+/* ==========================================
+   13) PLATE STATE
+========================================== */
+let plate = [];
+let currentFilter = 'all';
+let searchQuery = '';
+let prevTotals = { kcal:0, p:0, f:0, c:0 };
+const milestones = new Set();
+
+const productsEl = $('#products');
+const plateCircle = $('#plateCircle');
+const plateListEl = $('#plateList');
+const filtersEl = $('#filters');
+const searchInput = $('#searchInput');
+
+function saveToLocal(){
+  try { localStorage.setItem('healthyPlate', JSON.stringify(plate)); } catch(e) {}
+}
+function loadFromLocal(){
+  try {
+    const raw = JSON.parse(localStorage.getItem('healthyPlate') || '[]');
+    if (Array.isArray(raw)){
+      plate = raw.filter(it => products.find(p => p.id === it.id) && it.grams > 0);
+    }
+  } catch(e){ plate = []; }
+}
+
+function renderProducts(){
+  productsEl.innerHTML = '';
+  const q = searchQuery.toLowerCase().trim();
+  const filtered = products.filter(p => {
+    const catMatch = currentFilter === 'all' || p.cat === currentFilter;
+    const searchMatch = !q || p.name.toLowerCase().includes(q);
+    return catMatch && searchMatch;
+  });
+
+  if (filtered.length === 0){
+    productsEl.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">😕 Ոչինչ չգտնվեց</p>';
+    return;
+  }
+
+  filtered.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'product';
+    btn.style.animation = `slideInRight .35s ease ${i * 0.03}s both`;
+    btn.innerHTML = `
+      <span class="em">${p.em}</span>
+      <span class="nm">${p.name}</span>
+      <span class="kb">${p.kcal} կկալ · 100գ</span>
+    `;
+    btn.addEventListener('click', () => {
+      btn.classList.add('adding');
+      setTimeout(() => btn.classList.remove('adding'), 400);
+      addToPlate(p.id);
+    });
+    productsEl.appendChild(btn);
+  });
+}
+
+filtersEl.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  filtersEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.cat;
+  renderProducts();
+});
+
+searchInput.addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderProducts();
+});
+
+const presets = {
+  sport: [
+    { id:'chicken', grams:200 }, { id:'rice', grams:150 },
+    { id:'egg', grams:100 }, { id:'broccoli', grams:100 },
+    { id:'banana', grams:100 }
+  ],
+  balanced: [
+    { id:'chicken', grams:150 }, { id:'buck', grams:100 },
+    { id:'carrot', grams:100 }, { id:'tomato', grams:100 },
+    { id:'apple', grams:100 }, { id:'cottage', grams:100 }
+  ],
+  loss: [
+    { id:'cucumber', grams:150 }, { id:'spinach', grams:100 },
+    { id:'tomato', grams:150 }, { id:'tuna', grams:150 },
+    { id:'apple', grams:100 }
+  ]
+};
+$$('.presets button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    plate = presets[btn.dataset.preset].map(x => ({...x}));
+    milestones.clear();
+    renderPlate();
+    showToast('✅ Պրեսետը կիրառված է');
+    playSuccess();
+  });
+});
+
+function addToPlate(id){
+  const existing = plate.find(it => it.id === id);
+  if (existing) existing.grams += 100;
+  else plate.push({ id, grams: 100 });
+  renderPlate();
+  plateCircle.classList.remove('pulse');
+  void plateCircle.offsetWidth;
+  plateCircle.classList.add('pulse');
+  playAdd();
+  saveToLocal();
+  checkMilestones();
+}
+function removeFromPlate(id){
+  plate = plate.filter(it => it.id !== id);
+  renderPlate();
+  playRemove();
+  saveToLocal();
+}
+function updateGrams(id, grams){
+  const it = plate.find(x => x.id === id);
+  if (!it) return;
+  it.grams = clamp(Number(grams) || 1, 1, 2000);
+  renderPlate();
+  saveToLocal();
+}
+
+function renderPlate(){
+  plateCircle.innerHTML = '';
+  if (plate.length === 0){
+    plateCircle.innerHTML = '<div class="empty">Սկսիր ավելացնել մթերքներ →</div>';
+  } else {
+    plate.forEach(it => {
+      const p = products.find(x => x.id === it.id);
+      const span = document.createElement('span');
+      span.className = 'plate-item';
+      span.textContent = p.em;
+      span.title = p.name;
+      plateCircle.appendChild(span);
+    });
+  }
+
+  plateListEl.innerHTML = '';
+  plate.forEach(it => {
+    const p = products.find(x => x.id === it.id);
+    const row = document.createElement('div');
+    row.className = 'plate-row';
+    row.innerHTML = `
+      <span class="em">${p.em}</span>
+      <span class="nm">${p.name}</span>
+      <input type="number" min="1" max="2000" value="${it.grams}" inputmode="numeric" data-id="${it.id}">
+      <span class="unit">գ</span>
+      <button class="del" data-id="${it.id}" aria-label="Հեռացնել">×</button>
+    `;
+    plateListEl.appendChild(row);
+  });
+
+  plateListEl.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('change', e => updateGrams(e.target.dataset.id, e.target.value));
+    inp.addEventListener('input', e => {
+      if (e.target.value.length >= 1) updateGrams(e.target.dataset.id, e.target.value);
+    });
+  });
+  plateListEl.querySelectorAll('.del').forEach(btn => {
+    btn.addEventListener('click', e => removeFromPlate(e.target.dataset.id));
+  });
+
+  updateTotals();
+}
+
+function updateTotals(){
+  let kcal = 0, p = 0, f = 0, c = 0;
+  plate.forEach(it => {
+    const prod = products.find(x => x.id === it.id);
+    const k = it.grams / 100;
+    kcal += prod.kcal * k;
+    p    += prod.p * k;
+    f    += prod.f * k;
+    c    += prod.c * k;
+  });
+  kcal = Math.round(kcal);
+  p = Math.round(p * 10) / 10;
+  f = Math.round(f * 10) / 10;
+  c = Math.round(c * 10) / 10;
+
+  animateTotals('totKcal', prevTotals.kcal, kcal, ' կկալ', 0);
+  animateTotals('totP',    prevTotals.p,    p,    ' գ',    1);
+  animateTotals('totF',    prevTotals.f,    f,    ' գ',    1);
+  animateTotals('totC',    prevTotals.c,    c,    ' գ',    1);
+
+  ['totKcal','totP','totF','totC'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  });
+
+  prevTotals = { kcal, p, f, c };
+
+  const pKcal = p * 4, fKcal = f * 9, cKcal = c * 4;
+  const macroTotal = pKcal + fKcal + cKcal;
+  const donut = $('#donut');
+  if (macroTotal === 0){
+    donut.classList.add('empty');
+    donut.style.setProperty('--p', 0);
+    donut.style.setProperty('--f', 0);
+  } else {
+    donut.classList.remove('empty');
+    donut.style.setProperty('--p', ((pKcal / macroTotal) * 100).toFixed(1));
+    donut.style.setProperty('--f', ((fKcal / macroTotal) * 100).toFixed(1));
+  }
+  $('#donutTotal').textContent = kcal;
+
+  const caps = { kcal:2000, p:75, f:70, c:250 };
+  const setBar = (val, cap, barId, pctId) => {
+    const pct = Math.min(100, Math.round((val / cap) * 100));
+    document.getElementById(barId).style.width = pct + '%';
+    document.getElementById(pctId).textContent = pct + '%';
+  };
+  setBar(kcal, caps.kcal, 'barKcal', 'pctKcal');
+  setBar(p,    caps.p,    'barP',    'pctP');
+  setBar(f,    caps.f,    'barF',    'pctF');
+  setBar(c,    caps.c,    'barC',    'pctC');
+}
+
+function animateTotals(id, from, to, suffix, decimals){
+  const el = document.getElementById(id);
+  const start = performance.now();
+  const dur = 400;
+  function tick(now){
+    const prog = Math.min((now - start) / dur, 1);
+    const v = from + (to - from) * easeOutCubic(prog);
+    const formatted = decimals > 0 ? v.toFixed(1) : Math.round(v);
+    el.innerHTML = `${formatted}<small>${suffix}</small>`;
+    if (prog < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function checkMilestones(){
+  if (plate.length >= 1 && !milestones.has('first')){
+    milestones.add('first');
+    showToast('🎉 Առաջին քայլը կատարված է!');
+  }
+  if (plate.length >= 3 && !milestones.has('three')){
+    milestones.add('three');
+    showToast('🌟 Հիանալի ընթացք!');
+  }
+  if (plate.length >= 5 && !milestones.has('five')){
+    milestones.add('five');
+    showToast('🔥 Դու պրոֆեսիոնալ ես!');
+    launchConfetti();
+  }
+  const kcal = prevTotals.kcal;
+  if (kcal >= 1000 && !milestones.has('k1000')){
+    milestones.add('k1000');
+    showToast('💪 Կես ճանապարհն անցած է!');
+  }
+  if (kcal >= 1500 && !milestones.has('k1500')){
+    milestones.add('k1500');
+    showToast('🏆 Դու հասար նպատակին!');
+    launchConfetti();
+    playSuccess();
+  }
+  if (kcal < 1500) milestones.delete('k1500');
+  if (kcal < 1000) milestones.delete('k1000');
+}
+
+$('#resetBtn').addEventListener('click', () => {
+  if (plate.length === 0) return;
+  plate = [];
+  prevTotals = { kcal:0, p:0, f:0, c:0 };
+  milestones.clear();
+  renderPlate();
+  saveToLocal();
+  showToast('🧹 Ափսեն մաքրված է');
+  playRemove();
+});
+
+$('#saveBtn').addEventListener('click', () => {
+  saveToLocal();
+  showToast('💾 Պահված է');
+  playSuccess();
+});
+
+$('#printBtn').addEventListener('click', () => window.print());
+
+/* ==========================================
+   14) QUIZ
+========================================== */
+const quizData = [
+  { q: "Ո՞րն է սպիտակուցի հիմնական աղբյուրը:", options: ["Բրինձ", "Հավի կրծքամիս", "Խնձոր", "Ձիթապտղի յուղ"], correct: 1, exp: "Հավի միսը հարուստ է սպիտակուցով (~31 գ / 100 գ):" },
+  { q: "Օրական քանի՞ լիտր ջուր է խորհուրդ տրվում խմել:", options: ["0.5 լ", "1.5–2 լ", "5–6 լ", "10 լ"], correct: 1, exp: "Մեծահասակներին խորհուրդ է տրվում 1.5–2 լիտր ջուր օրական:" },
+  { q: "Ո՞ր վիտամինն է արտադրվում արևի ազդեցությամբ:", options: ["Վիտամին C", "Վիտամին D", "Վիտամին A", "Վիտամին B12"], correct: 1, exp: "Վիտամին D-ն արտադրվում է մաշկում արևի ուլտրամանուշակագույն ճառագայթների ազդեցությամբ:" },
+  { q: "Ո՞րն է ավելի օգտակար ածխաջրի աղբյուր:", options: ["Շաքար", "Սպիտակ հաց", "Վարսակ", "Կոնֆետ"], correct: 2, exp: "Վարսակը բարդ ածխաջրերի հարուստ աղբյուր է, որը տալիս է երկարատև էներգիա:" },
+  { q: "Ո՞ր մթերքն է հարուստ օմեգա-3 ճարպաթթուներով:", options: ["Տավարի միս", "Սաղմոն", "Կարտոֆիլ", "Հաց"], correct: 1, exp: "Սաղմոնը, թունան և այլ յուղոտ ձկները հարուստ են օմեգա-3-ով:" }
+];
+
+const quizBox = $('#quizBox');
+let qIdx = 0, qScore = 0, qAnswered = false;
+
+function renderQuiz(){
+  if (qIdx >= quizData.length){ renderQuizEnd(); return; }
+  const item = quizData[qIdx];
+  const pct = (qIdx / quizData.length) * 100;
+  qAnswered = false;
+
+  quizBox.innerHTML = `
+    <div class="quiz-progress">
+      <span>Հարց ${qIdx + 1} / ${quizData.length}</span>
+      <div class="bar"><div style="width:${pct}%"></div></div>
+    </div>
+    <div class="quiz-question">${item.q}</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="quiz-next" id="quizNext">Հաջորդ →</button>
+  `;
+
+  const optionsEl = $('#quizOptions');
+  item.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.innerHTML = `<span class="badge">${String.fromCharCode(65 + i)}</span>${opt}`;
+    btn.addEventListener('click', () => handleQuizAnswer(i));
+    optionsEl.appendChild(btn);
+  });
+
+  $('#quizNext').addEventListener('click', () => {
+    qIdx++;
+    renderQuiz();
+  });
+}
+
+function handleQuizAnswer(chosen){
+  if (qAnswered) return;
+  qAnswered = true;
+
+  const item = quizData[qIdx];
+  const opts = $$('#quizOptions .quiz-opt');
+  opts.forEach((b, i) => {
+    b.classList.add('disabled');
+    if (i === item.correct) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+  });
+
+  const fb = $('#quizFeedback');
+  fb.classList.add('show');
+  if (chosen === item.correct){
+    fb.classList.add('ok');
+    fb.textContent = '✅ Ճիշտ է! ' + item.exp;
+    qScore++;
+    playSuccess();
+  } else {
+    fb.classList.add('bad');
+    fb.textContent = '❌ Սխալ: ' + item.exp;
+    playError();
+  }
+
+  const nextBtn = $('#quizNext');
+  nextBtn.classList.add('show');
+  nextBtn.textContent = qIdx === quizData.length - 1 ? 'Տես արդյունքը →' : 'Հաջորդ →';
+}
+
+function renderQuizEnd(){
+  const total = quizData.length;
+  const pct = Math.round((qScore / total) * 100);
+  let msg, emoji;
+  if (pct === 100){ msg = 'Կատարյալ! Դու սնուցման փորձագետ ես:'; emoji = '🏆'; }
+  else if (pct >= 60){ msg = 'Լավ արդյունք! Մի փոքր էլ պարապիր:'; emoji = '🌟'; }
+  else { msg = 'Փորձիր նորից, դուք կարող եք ավելի լավ:'; emoji = '💪'; }
+
+  quizBox.innerHTML = `
+    <div class="quiz-end">
+      <div style="font-size:3.5rem;margin-bottom:8px;">${emoji}</div>
+      <div class="score">${qScore} / ${total}</div>
+      <div class="score-text">${msg}</div>
+      <button id="quizRestart">🔄 Փորձել նորից</button>
+    </div>
+  `;
+  if (pct >= 60){ launchConfetti(); playSuccess(); }
+  $('#quizRestart').addEventListener('click', () => {
+    qIdx = 0; qScore = 0;
+    renderQuiz();
+  });
+}
+
+/* ==========================================
+   15) REVEAL ON SCROLL
+========================================== */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting){
+      const el = en.target;
+      const siblings = [...el.parentElement.children].filter(c =>
+        c.classList.contains('card') || c.classList.contains('fact') || c.classList.contains('calc-card'));
+      const idx = siblings.indexOf(el);
+      el.style.transitionDelay = Math.max(0, idx) * 0.08 + 's';
+      el.classList.add('show');
+      io.unobserve(el);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+$$('.reveal, .card, .fact, .calc-card').forEach(el => io.observe(el));
+
+/* ==========================================
+   16) ACTIVE NAV LINK
+========================================== */
+const sections = $$('section[id], footer[id]');
+const navLinks = $$('#navList a');
+const navObserver = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting){
+      const id = en.target.id;
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    }
+  });
+}, { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' });
+sections.forEach(s => navObserver.observe(s));
+
+/* ==========================================
+   17) RIPPLE
+========================================== */
+function attachRipple(el){
+  el.addEventListener('click', function(e){
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+    const span = document.createElement('span');
+    span.className = 'ripple';
+    span.style.width = span.style.height = size + 'px';
+    span.style.left = x + 'px';
+    span.style.top = y + 'px';
+    this.style.position = this.style.position || 'relative';
+    this.style.overflow = 'hidden';
+    this.appendChild(span);
+    setTimeout(() => span.remove(), 600);
+  });
+}
+$$('.reset-btn, .action-btn, .filters button, .back-top, .nav-toggle, .fixed-btn, .calc-btn, .presets button, .quiz-next, .tip-dots button').forEach(attachRipple);
+
+/* ==========================================
+   18) 🎵 ՖՈՆԱՅԻՆ ԵՐԱԺՇՏՈՒԹՅՈՒՆ
+========================================== */
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+
+let musicOn = false;
+let musicUserControlled = false;
+
+function setMusicUI(on){
+  musicOn = on;
+  if (musicToggle){
+    musicToggle.textContent = on ? '🎶' : '🎵';
+    musicToggle.classList.toggle('playing', on);
+  }
+}
+
+function tryPlayMusic(){
+  if (!bgMusic || musicOn) return;
+  bgMusic.volume = 0.3;
+  const p = bgMusic.play();
+  if (p && p.then){
+    p.then(() => setMusicUI(true)).catch(() => {});
+  } else {
+    setMusicUI(true);
+  }
+}
+
+// 1) Փորձիր autoplay անմիջապես + մի քանի անգամ
+if (bgMusic){
+  tryPlayMusic();
+  setTimeout(tryPlayMusic, 400);
+  setTimeout(tryPlayMusic, 1200);
+  window.addEventListener('load', tryPlayMusic);
+}
+
+// 2) Fallback — առաջին user gesture-ի ժամանակ
+function onFirstUserGesture(e){
+  if (musicUserControlled) return;
+  if (e.target && e.target.closest && e.target.closest('#musicToggle')) return;
+  tryPlayMusic();
+  removeFirstGestureListeners();
+}
+function removeFirstGestureListeners(){
+  ['pointerdown','touchstart','keydown','click','scroll'].forEach(ev =>
+    document.removeEventListener(ev, onFirstUserGesture));
+}
+['pointerdown','touchstart','keydown','click','scroll'].forEach(ev =>
+  document.addEventListener(ev, onFirstUserGesture, { passive: true }));
+
+// 3) Կոճակ
+if (musicToggle){
+  musicToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    musicUserControlled = true;
+    removeFirstGestureListeners();
+    if (musicOn){
+      bgMusic.pause();
+      setMusicUI(false);
+    } else {
+      bgMusic.volume = 0.3;
+      const p = bgMusic.play();
+      if (p && p.then){
+        p.then(() => setMusicUI(true)).catch(() => {
+          showToast('⚠️ Երաժշտությունը չհաջողվեց միացնել');
+        });
+      } else {
+        setMusicUI(true);
+      }
+    }
+  });
+}
+
+/* ==========================================
+   19) INIT
+========================================== */
+loadFromLocal();
+renderProducts();
+renderPlate();
+renderQuiz();
+
+// unlock audio context on first interaction
+document.body.addEventListener('pointerdown', function unlock(){
+  initAudio();
+  document.body.removeEventListener('pointerdown', unlock);
+}, { once: true });
+</script>
+</body>
+</html>
